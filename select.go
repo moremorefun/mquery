@@ -113,6 +113,7 @@ func (q *selectData) ToSQL() (string, map[string]interface{}, error) {
 	var err error
 	var buf bytes.Buffer
 	arg := map[string]interface{}{}
+
 	buf.WriteString("SELECT")
 	if len(q.columns) == 0 {
 		buf.WriteString("\n   *")
