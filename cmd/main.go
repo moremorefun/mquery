@@ -117,6 +117,16 @@ func tDelete() {
 		Delete().
 		Table("t_user").
 		Where(
+			mquery.ConvertOr{
+				Left: mquery.ConvertEq{
+					K: "t_user.id",
+					V: 1,
+				},
+				Right: mquery.ConvertEq{
+					K: "t_user.id",
+					V: 1,
+				},
+			},
 			mquery.ConvertEq{
 				K: "t_user.id",
 				V: 1,

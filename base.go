@@ -2,6 +2,7 @@ package mquery
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 )
 
@@ -155,5 +156,29 @@ func (o ConvertValue) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}
 	if err != nil {
 		return bytes.Buffer{}, nil, err
 	}
+	return buf, arg, nil
+}
+
+type ConvertOr struct {
+	Left  SQLAble
+	Right SQLAble
+}
+
+func (o ConvertOr) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
+	var err error
+	if o.Left == nil || o.Right == nil {
+		return bytes.Buffer{}, nil, fmt.Errorf("or empty")
+	}
+	buf.WriteString("(")
+	buf, arg, err = o.Left.AppendToQuery(buf, arg)
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	buf.WriteString(" or ")
+	buf, arg, err = o.Right.AppendToQuery(buf, arg)
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	buf.WriteString(" )")
 	return buf, arg, nil
 }
