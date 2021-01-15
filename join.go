@@ -7,6 +7,7 @@ import (
 
 const (
 	JoinTypeInner = 1
+	JoinTypeLeft  = 2
 )
 
 type joinData struct {
@@ -47,6 +48,11 @@ func (q *joinData) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (
 	switch q.joinType {
 	case JoinTypeInner:
 		_, err := buf.WriteString("INNER JOIN")
+		if err != nil {
+			return bytes.Buffer{}, nil, err
+		}
+	case JoinTypeLeft:
+		_, err := buf.WriteString("LEFT JOIN")
 		if err != nil {
 			return bytes.Buffer{}, nil, err
 		}

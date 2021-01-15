@@ -57,6 +57,50 @@ func (o ConvertEq) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (
 	return buf, arg, nil
 }
 
+// ConvertGt k>:k
+type ConvertGt ConvertKv
+
+func (o ConvertGt) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
+	k := getK(o.K)
+
+	_, err := buf.WriteString(o.K)
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	_, err = buf.WriteString(">:")
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	_, err = buf.WriteString(k)
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	arg[k] = o.V
+	return buf, arg, nil
+}
+
+// ConvertLt k<:k
+type ConvertLt ConvertKv
+
+func (o ConvertLt) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
+	k := getK(o.K)
+
+	_, err := buf.WriteString(o.K)
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	_, err = buf.WriteString("<:")
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	_, err = buf.WriteString(k)
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	arg[k] = o.V
+	return buf, arg, nil
+}
+
 // ConvertEqRaw k=v
 type ConvertEqRaw ConvertKvStr
 
