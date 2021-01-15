@@ -8,7 +8,8 @@ import (
 
 func main() {
 	//tSelect()
-	tInsert()
+	//tInsert()
+	tUpdate()
 }
 
 func tSelect() {
@@ -76,6 +77,30 @@ func tInsert() {
 			mquery.ConvertEq{
 				K: "user_city",
 				V: "hao",
+			},
+		).
+		ToSQL()
+	if err != nil {
+		fmt.Printf("%s\n", err.Error())
+		return
+	}
+	fmt.Printf("%s\n%#v\n", query, arg)
+}
+
+func tUpdate() {
+	query, arg, err := mquery.
+		Update().
+		Table("t_user").
+		Update(
+			mquery.ConvertEq{
+				K: "t_user.name",
+				V: "hao",
+			},
+		).
+		Where(
+			mquery.ConvertEq{
+				K: "t_user.id",
+				V: 1,
 			},
 		).
 		ToSQL()
