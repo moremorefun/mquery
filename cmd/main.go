@@ -7,6 +7,11 @@ import (
 )
 
 func main() {
+	//tSelect()
+	tInsert()
+}
+
+func tSelect() {
 	query, arg, err := mquery.
 		Select().
 		ColumnsString("id", "user_name").
@@ -39,6 +44,40 @@ func main() {
 		Offset(1).
 		Limit(100).
 		ForUpdate().
+		ToSQL()
+	if err != nil {
+		fmt.Printf("%s\n", err.Error())
+		return
+	}
+	fmt.Printf("%s\n%#v\n", query, arg)
+}
+
+func tInsert() {
+	query, arg, err := mquery.
+		Insert().
+		Ignore().
+		Into("t_user").
+		Columns(
+			"id",
+			"user_name",
+		).
+		Values(
+			[]interface{}{
+				1,
+				"hao",
+			},
+			[]interface{}{
+				2,
+				"hao1",
+			},
+		).
+		Duplicates(
+			mquery.ConvertValue("user_name"),
+			mquery.ConvertEq{
+				K: "user_city",
+				V: "hao",
+			},
+		).
 		ToSQL()
 	if err != nil {
 		fmt.Printf("%s\n", err.Error())
