@@ -9,7 +9,8 @@ import (
 func main() {
 	//tSelect()
 	//tInsert()
-	tUpdate()
+	//tUpdate()
+	tDelete()
 }
 
 func tSelect() {
@@ -98,6 +99,28 @@ func tUpdate() {
 			},
 		).
 		Where(
+			mquery.ConvertEq{
+				K: "t_user.id",
+				V: 1,
+			},
+		).
+		ToSQL()
+	if err != nil {
+		fmt.Printf("%s\n", err.Error())
+		return
+	}
+	fmt.Printf("%s\n%#v\n", query, arg)
+}
+
+func tDelete() {
+	query, arg, err := mquery.
+		Delete().
+		Table("t_user").
+		Where(
+			mquery.ConvertEq{
+				K: "t_user.id",
+				V: 1,
+			},
 			mquery.ConvertEq{
 				K: "t_user.id",
 				V: 1,
