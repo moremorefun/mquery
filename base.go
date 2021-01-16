@@ -3,14 +3,21 @@ package mquery
 import (
 	"bytes"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
+var globalIndex int64
+
 // getK 获取key
 func getK(old string) string {
+	globalIndex++
 	old = strings.ReplaceAll(old, ".", "_")
 	old = strings.ReplaceAll(old, "`", "_")
-	return old
+	var buf bytes.Buffer
+	buf.WriteString(old)
+	buf.WriteString(strconv.FormatInt(globalIndex, 10))
+	return buf.String()
 }
 
 // ConvertRaw 原样生成
