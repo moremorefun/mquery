@@ -16,6 +16,7 @@ func getK(old string) string {
 	old = strings.ReplaceAll(old, "`", "_")
 	var buf bytes.Buffer
 	buf.WriteString(old)
+	buf.WriteString("_")
 	buf.WriteString(strconv.FormatInt(globalIndex, 10))
 	return buf.String()
 }
