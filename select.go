@@ -2,8 +2,11 @@ package mquery
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"strconv"
+
+	"github.com/moremorefun/mcommon"
 )
 
 type selectData struct {
@@ -203,4 +206,34 @@ func (q *selectData) ToSQL() (string, map[string]interface{}, error) {
 		buf.WriteString("\nFOR UPDATE")
 	}
 	return buf.String(), arg, nil
+}
+
+// DoGet 获取数据
+func (q *selectData) DoGet(ctx context.Context, tx mcommon.DbExeAble, dest interface{}) (bool, error) {
+	query, arg, err := q.ToSQL()
+	if err != nil {
+		return false, err
+	}
+	return mcommon.DbGetNamedContent(
+		ctx,
+		tx,
+		dest,
+		query,
+		arg,
+	)
+}
+
+// DoSelect 获取数据
+func (q *selectData) DoSelect(ctx context.Context, tx mcommon.DbExeAble, dest interface{}) error {
+	query, arg, err := q.ToSQL()
+	if err != nil {
+		return err
+	}
+	return mcommon.DbSelectNamedContent(
+		ctx,
+		tx,
+		dest,
+		query,
+		arg,
+	)
 }

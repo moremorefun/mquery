@@ -2,7 +2,10 @@ package mquery
 
 import (
 	"bytes"
+	"context"
 	"fmt"
+
+	"github.com/moremorefun/mcommon"
 )
 
 type deleteData struct {
@@ -53,4 +56,18 @@ func (q *deleteData) ToSQL() (string, map[string]interface{}, error) {
 		}
 	}
 	return buf.String(), arg, nil
+}
+
+// DoExecuteCount 获取执行行数
+func (q *deleteData) DoExecuteCount(ctx context.Context, tx mcommon.DbExeAble) (int64, error) {
+	query, arg, err := q.ToSQL()
+	if err != nil {
+		return 0, err
+	}
+	return mcommon.DbExecuteCountNamedContent(
+		ctx,
+		tx,
+		query,
+		arg,
+	)
 }

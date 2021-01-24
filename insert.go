@@ -2,7 +2,10 @@ package mquery
 
 import (
 	"bytes"
+	"context"
 	"fmt"
+
+	"github.com/moremorefun/mcommon"
 )
 
 type insertData struct {
@@ -106,4 +109,32 @@ func (q *insertData) ToSQL() (string, map[string]interface{}, error) {
 		}
 	}
 	return buf.String(), arg, nil
+}
+
+// DoExecuteLastID 获取最后一个插入id
+func (q *insertData) DoExecuteLastID(ctx context.Context, tx mcommon.DbExeAble) (int64, error) {
+	query, arg, err := q.ToSQL()
+	if err != nil {
+		return 0, err
+	}
+	return mcommon.DbExecuteLastIDNamedContent(
+		ctx,
+		tx,
+		query,
+		arg,
+	)
+}
+
+// DoExecuteCount 获取执行行数
+func (q *insertData) DoExecuteCount(ctx context.Context, tx mcommon.DbExeAble) (int64, error) {
+	query, arg, err := q.ToSQL()
+	if err != nil {
+		return 0, err
+	}
+	return mcommon.DbExecuteCountNamedContent(
+		ctx,
+		tx,
+		query,
+		arg,
+	)
 }
