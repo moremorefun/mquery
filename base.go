@@ -44,6 +44,13 @@ type ConvertKvStr struct {
 	V string
 }
 
+// ConvertFuncColAs 字符串
+type ConvertFuncColAs struct {
+	Func string
+	Col  string
+	As   string
+}
+
 // ConvertEq k=:k
 type ConvertEq ConvertKv
 
@@ -266,5 +273,41 @@ func (o ConvertOr) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (
 		return bytes.Buffer{}, nil, err
 	}
 	buf.WriteString(" )")
+	return buf, arg, nil
+}
+
+// ConvertFuncAs func(col) AS as
+type ConvertFuncAs ConvertFuncColAs
+
+// ConvertEqRawMake 生成
+func ConvertFuncAsMake(f, col, as string) ConvertFuncAs {
+	return ConvertFuncAs{
+		Func: f,
+		Col:  col,
+		As:   as,
+	}
+}
+
+func (o ConvertFuncAs) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
+	_, err := buf.WriteString(o.Func)
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	_, err = buf.WriteString("(")
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	_, err = buf.WriteString(o.Col)
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	_, err = buf.WriteString(") AS ")
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	_, err = buf.WriteString(o.As)
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
 	return buf, arg, nil
 }
