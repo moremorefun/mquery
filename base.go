@@ -47,6 +47,14 @@ type ConvertKvStr struct {
 // ConvertEq k=:k
 type ConvertEq ConvertKv
 
+// ConvertEqMake 生成
+func ConvertEqMake(k string, v interface{}) ConvertEq {
+	return ConvertEq{
+		K: k,
+		V: v,
+	}
+}
+
 func (o ConvertEq) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	k := getK(o.K)
 
@@ -68,6 +76,14 @@ func (o ConvertEq) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (
 
 // ConvertAdd k=k+:k
 type ConvertAdd ConvertKv
+
+// ConvertAddMake 生成
+func ConvertAddMake(k string, v interface{}) ConvertAdd {
+	return ConvertAdd{
+		K: k,
+		V: v,
+	}
+}
 
 func (o ConvertAdd) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	k := getK(o.K)
@@ -99,6 +115,14 @@ func (o ConvertAdd) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) 
 // ConvertGt k>:k
 type ConvertGt ConvertKv
 
+// ConvertGtMake 生成
+func ConvertGtMake(k string, v interface{}) ConvertGt {
+	return ConvertGt{
+		K: k,
+		V: v,
+	}
+}
+
 func (o ConvertGt) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	k := getK(o.K)
 
@@ -121,6 +145,14 @@ func (o ConvertGt) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (
 // ConvertLt k<:k
 type ConvertLt ConvertKv
 
+// ConvertLtMake 生成
+func ConvertLtMake(k string, v interface{}) ConvertLt {
+	return ConvertLt{
+		K: k,
+		V: v,
+	}
+}
+
 func (o ConvertLt) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	k := getK(o.K)
 
@@ -142,6 +174,14 @@ func (o ConvertLt) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (
 
 // ConvertEqRaw k=v
 type ConvertEqRaw ConvertKvStr
+
+// ConvertEqRawMake 生成
+func ConvertEqRawMake(k, v string) ConvertEqRaw {
+	return ConvertEqRaw{
+		K: k,
+		V: v,
+	}
+}
 
 func (o ConvertEqRaw) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	_, err := buf.WriteString(o.K)
@@ -200,6 +240,14 @@ func (o ConvertValue) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}
 type ConvertOr struct {
 	Left  SQLAble
 	Right SQLAble
+}
+
+// ConvertOrMake 生成
+func ConvertOrMake(left, right SQLAble) ConvertOr {
+	return ConvertOr{
+		Left:  left,
+		Right: right,
+	}
 }
 
 func (o ConvertOr) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
