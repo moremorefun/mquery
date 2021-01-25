@@ -111,12 +111,9 @@ func (q *selectData) ForUpdate() *selectData {
 	return q
 }
 
-// ToSQL 生成sql
-func (q *selectData) ToSQL() (string, map[string]interface{}, error) {
+// AppendToQuery 添加输入
+func (q *selectData) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	var err error
-	var buf bytes.Buffer
-	arg := map[string]interface{}{}
-
 	buf.WriteString("SELECT")
 	if len(q.columns) == 0 {
 		buf.WriteString("\n   *")
@@ -125,11 +122,11 @@ func (q *selectData) ToSQL() (string, map[string]interface{}, error) {
 		for i, column := range q.columns {
 			_, err = buf.WriteString("\n    ")
 			if err != nil {
-				return "", nil, err
+				return bytes.Buffer{}, nil, err
 			}
 			buf, arg, err = column.AppendToQuery(buf, arg)
 			if err != nil {
-				return "", nil, err
+				return bytes.Buffer{}, nil, err
 			}
 			if i != lastColumnIndex {
 				buf.WriteString(",")
@@ -138,19 +135,19 @@ func (q *selectData) ToSQL() (string, map[string]interface{}, error) {
 	}
 
 	if q.from == nil {
-		return "", nil, fmt.Errorf("select no from")
+		return bytes.Buffer{}, nil, fmt.Errorf("select no from")
 	}
 	buf.WriteString("\nFROM\n    ")
 	buf, arg, err = q.from.AppendToQuery(buf, arg)
 	if err != nil {
-		return "", nil, err
+		return bytes.Buffer{}, nil, err
 	}
 	if len(q.joins) > 0 {
 		for _, join := range q.joins {
 			buf.WriteString("\n")
 			buf, arg, err = join.AppendToQuery(buf, arg)
 			if err != nil {
-				return "", nil, err
+				return bytes.Buffer{}, nil, err
 			}
 		}
 	}
@@ -163,7 +160,7 @@ func (q *selectData) ToSQL() (string, map[string]interface{}, error) {
 			}
 			buf, arg, err = where.AppendToQuery(buf, arg)
 			if err != nil {
-				return "", nil, err
+				return bytes.Buffer{}, nil, err
 			}
 		}
 	}
@@ -175,7 +172,7 @@ func (q *selectData) ToSQL() (string, map[string]interface{}, error) {
 			}
 			buf, arg, err = groupBy.AppendToQuery(buf, arg)
 			if err != nil {
-				return "", nil, err
+				return bytes.Buffer{}, nil, err
 			}
 		}
 	}
@@ -187,7 +184,7 @@ func (q *selectData) ToSQL() (string, map[string]interface{}, error) {
 			}
 			buf, arg, err = orderByPart.AppendToQuery(buf, arg)
 			if err != nil {
-				return "", nil, err
+				return bytes.Buffer{}, nil, err
 			}
 		}
 	}
@@ -205,7 +202,20 @@ func (q *selectData) ToSQL() (string, map[string]interface{}, error) {
 	if q.isForUpdate {
 		buf.WriteString("\nFOR UPDATE")
 	}
-	return buf.String(), arg, nil
+	return buf, arg, nil
+}
+
+// ToSQL 生成sql
+func (q *selectData) ToSQL() (string, map[string]interface{}, error) {
+	var err error
+	var buf bytes.Buffer
+	arg := map[string]interface{}{}
+
+	buf, arg, err = q.AppendToQuery(buf, arg)
+	if err != nil {
+		return "", nil, err
+	}
+	return buf.String(), arg, err
 }
 
 // DoGet 获取数据

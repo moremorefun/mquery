@@ -14,6 +14,7 @@ type joinData struct {
 	joinType int64
 	table    SQLAble
 	onParts  []SQLAble
+	as       string
 }
 
 // Join 链接
@@ -42,6 +43,12 @@ func (q *joinData) On(cond ...SQLAble) *joinData {
 	return q
 }
 
+// As 更名
+func (q *joinData) As(asName string) *joinData {
+	q.as = asName
+	return q
+}
+
 // ToSQL 生成sql
 func (q *joinData) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	var err error
@@ -62,9 +69,16 @@ func (q *joinData) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (
 	if q.table == nil {
 		return bytes.Buffer{}, nil, fmt.Errorf("join no table")
 	}
+	if len(q.as) > 0 {
+		buf.WriteString("(\n")
+	}
 	buf, arg, err = q.table.AppendToQuery(buf, arg)
 	if err != nil {
 		return bytes.Buffer{}, nil, err
+	}
+	if len(q.as) > 0 {
+		buf.WriteString("\n) AS ")
+		buf.WriteString(q.as)
 	}
 	if len(q.onParts) == 0 {
 		return bytes.Buffer{}, nil, fmt.Errorf("join no on")
