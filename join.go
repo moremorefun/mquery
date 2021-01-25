@@ -54,12 +54,12 @@ func (q *joinData) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (
 	var err error
 	switch q.joinType {
 	case JoinTypeInner:
-		_, err := buf.WriteString("INNER JOIN")
+		_, err := buf.WriteString("INNER JOIN ")
 		if err != nil {
 			return bytes.Buffer{}, nil, err
 		}
 	case JoinTypeLeft:
-		_, err := buf.WriteString("LEFT JOIN")
+		_, err := buf.WriteString("LEFT JOIN ")
 		if err != nil {
 			return bytes.Buffer{}, nil, err
 		}
