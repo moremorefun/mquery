@@ -3,6 +3,7 @@ package mquery
 import (
 	"bytes"
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -51,7 +52,7 @@ type ConvertFuncColAs struct {
 	As   string
 }
 
-// ConvertEq k=:k
+// ConvertEq k=:k or k IN (:k)
 type ConvertEq ConvertKv
 
 // ConvertEqMake 生成
@@ -65,17 +66,20 @@ func ConvertEqMake(k string, v interface{}) ConvertEq {
 func (o ConvertEq) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	k := getK(o.K)
 
-	_, err := buf.WriteString(o.K)
-	if err != nil {
-		return bytes.Buffer{}, nil, err
-	}
-	_, err = buf.WriteString("=:")
-	if err != nil {
-		return bytes.Buffer{}, nil, err
-	}
-	_, err = buf.WriteString(k)
-	if err != nil {
-		return bytes.Buffer{}, nil, err
+	buf.WriteString(o.K)
+	rt := reflect.TypeOf(o.V)
+	switch rt.Kind() {
+	case reflect.Slice:
+		s := reflect.ValueOf(o.V)
+		if s.Len() == 0 {
+			return bytes.Buffer{}, nil, fmt.Errorf("in cond len 0")
+		}
+		buf.WriteString(" IN (:")
+		buf.WriteString(k)
+		buf.WriteString(")")
+	default:
+		buf.WriteString("=:")
+		buf.WriteString(k)
 	}
 	arg[k] = o.V
 	return buf, arg, nil
