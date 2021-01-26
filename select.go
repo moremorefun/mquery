@@ -261,17 +261,3 @@ func (q *selectData) DoSelect(ctx context.Context, tx mcommon.DbExeAble, dest in
 		arg,
 	)
 }
-
-// DoExecuteCount 获取执行行数
-func (q *selectData) DoExecuteCount(ctx context.Context, tx mcommon.DbExeAble) (int64, error) {
-	query, arg, err := q.ToSQL()
-	if err != nil {
-		return 0, err
-	}
-	return mcommon.DbExecuteCountNamedContent(
-		ctx,
-		tx,
-		query,
-		arg,
-	)
-}
