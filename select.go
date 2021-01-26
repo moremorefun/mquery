@@ -42,6 +42,12 @@ func (q *selectData) ColumnsString(columns ...string) *selectData {
 	return q
 }
 
+// ColumnsReset 字段
+func (q *selectData) ColumnsReset() *selectData {
+	q.columns = nil
+	return q
+}
+
 // From 表名
 func (q *selectData) From(from SQLAble) *selectData {
 	q.from = from
