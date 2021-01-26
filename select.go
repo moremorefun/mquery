@@ -19,6 +19,7 @@ type selectData struct {
 	offset       int64
 	limit        int64
 	isForUpdate  bool
+	as           string
 }
 
 // Select 创建搜索
@@ -111,9 +112,18 @@ func (q *selectData) ForUpdate() *selectData {
 	return q
 }
 
+// As 设置为as
+func (q *selectData) As(newName string) *selectData {
+	q.as = newName
+	return q
+}
+
 // AppendToQuery 添加输入
 func (q *selectData) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	var err error
+	if len(q.as) > 0 {
+		buf.WriteString("(\n")
+	}
 	buf.WriteString("SELECT")
 	if len(q.columns) == 0 {
 		buf.WriteString("\n   *")
@@ -201,6 +211,10 @@ func (q *selectData) AppendToQuery(buf bytes.Buffer, arg map[string]interface{})
 	}
 	if q.isForUpdate {
 		buf.WriteString("\nFOR UPDATE")
+	}
+	if len(q.as) > 0 {
+		buf.WriteString("\n) AS ")
+		buf.WriteString(q.as)
 	}
 	return buf, arg, nil
 }
