@@ -267,3 +267,21 @@ func (q *selectData) DoSelect(ctx context.Context, tx mcommon.DbExeAble, dest in
 		arg,
 	)
 }
+
+// Row 获取数据
+func (q *selectData) Row(ctx context.Context, tx mcommon.DbExeAble) (interface{}, error) {
+	query, arg, err := q.ToSQL()
+	if err != nil {
+		return nil, err
+	}
+	return mcommon.DbNamedRowContent(ctx, tx, query, arg)
+}
+
+// Rows 获取数据
+func (q *selectData) Rows(ctx context.Context, tx mcommon.DbExeAble) ([]map[string]interface{}, error) {
+	query, arg, err := q.ToSQL()
+	if err != nil {
+		return nil, err
+	}
+	return mcommon.DbNamedRowsContent(ctx, tx, query, arg)
+}
