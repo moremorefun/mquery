@@ -3,13 +3,24 @@ package mquery
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/moremorefun/mcommon"
 )
 
+func formatMapKey(oldKey string) string {
+	oldKey = strings.ReplaceAll(oldKey, "`", "")
+	lastIndex := strings.LastIndex(oldKey, ".")
+	if lastIndex != -1 {
+		oldKey = oldKey[lastIndex+1:]
+	}
+	return oldKey
+}
+
 // DbSelectMapOne2One 获取关联map
 func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string]interface{}, error) {
 	var keyValues []interface{}
+	sourceKey = formatMapKey(sourceKey)
 	for _, sourceRow := range sourceRows {
 		v, ok := sourceRow[sourceKey]
 		if !ok {
@@ -36,11 +47,12 @@ func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []
 	if err != nil {
 		return nil, err
 	}
+	mapTargetKey := formatMapKey(targetKey)
 	targetMap := map[string]interface{}{}
 	for _, targetRow := range targetRows {
-		kv, ok := targetRow[targetKey]
+		kv, ok := targetRow[mapTargetKey]
 		if !ok {
-			return nil, fmt.Errorf("no target key: %s", targetKey)
+			return nil, fmt.Errorf("no target key: %s", mapTargetKey)
 		}
 		k := fmt.Sprintf("%v", kv)
 		targetMap[k] = targetRow
@@ -50,8 +62,8 @@ func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []
 
 // DbSelectMapOne2Many 获取关联map
 func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string][]interface{}, error) {
-
 	var keyValues []interface{}
+	sourceKey = formatMapKey(sourceKey)
 	for _, sourceRow := range sourceRows {
 		v, ok := sourceRow[sourceKey]
 		if !ok {
@@ -78,11 +90,12 @@ func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows [
 	if err != nil {
 		return nil, err
 	}
+	mapTargetKey := formatMapKey(targetKey)
 	targetMap := map[string][]interface{}{}
 	for _, targetRow := range targetRows {
-		kv, ok := targetRow[targetKey]
+		kv, ok := targetRow[mapTargetKey]
 		if !ok {
-			return nil, fmt.Errorf("no target key: %s", targetKey)
+			return nil, fmt.Errorf("no target key: %s", mapTargetKey)
 		}
 		k := fmt.Sprintf("%v", kv)
 		targetMap[k] = append(targetMap[k], targetRow)
