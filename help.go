@@ -13,6 +13,9 @@ func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []
 	for _, sourceRow := range sourceRows {
 		keyValues = append(keyValues, sourceRow[sourceKey])
 	}
+	if len(keyValues) == 0 {
+		return nil, nil
+	}
 	targetRows, err := Select().
 		ColumnsString(targetColumns...).
 		FromString(targetTableName).
@@ -37,6 +40,9 @@ func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows [
 	var keyValues []interface{}
 	for _, sourceRow := range sourceRows {
 		keyValues = append(keyValues, sourceRow[sourceKey])
+	}
+	if len(keyValues) == 0 {
+		return nil, nil
 	}
 	targetRows, err := Select().
 		ColumnsString(targetColumns...).
