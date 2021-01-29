@@ -26,7 +26,9 @@ func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []
 		if !ok {
 			return nil, fmt.Errorf("no source key: %s", sourceKey)
 		}
-		keyValues = append(keyValues, v)
+		if !mcommon.IsInSlice(keyValues, v) {
+			keyValues = append(keyValues, v)
+		}
 	}
 	if len(keyValues) == 0 {
 		return nil, nil
@@ -69,7 +71,9 @@ func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows [
 		if !ok {
 			return nil, fmt.Errorf("no source key: %s", sourceKey)
 		}
-		keyValues = append(keyValues, v)
+		if !mcommon.IsInSlice(keyValues, v) {
+			keyValues = append(keyValues, v)
+		}
 	}
 	if len(keyValues) == 0 {
 		return nil, nil
