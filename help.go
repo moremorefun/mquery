@@ -11,7 +11,11 @@ import (
 func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string]interface{}, error) {
 	var keyValues []interface{}
 	for _, sourceRow := range sourceRows {
-		keyValues = append(keyValues, sourceRow[sourceKey])
+		v, ok := sourceRow[sourceKey]
+		if !ok {
+			return nil, fmt.Errorf("no source key: %s", sourceKey)
+		}
+		keyValues = append(keyValues, v)
 	}
 	if len(keyValues) == 0 {
 		return nil, nil
@@ -29,7 +33,11 @@ func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []
 	}
 	targetMap := map[string]interface{}{}
 	for _, targetRow := range targetRows {
-		k := fmt.Sprintf("%v", targetRow[targetKey])
+		kv, ok := targetRow[targetKey]
+		if !ok {
+			return nil, fmt.Errorf("no target key: %s", targetKey)
+		}
+		k := fmt.Sprintf("%v", kv)
 		targetMap[k] = targetRow
 	}
 	return targetMap, nil
@@ -39,7 +47,11 @@ func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []
 func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string][]interface{}, error) {
 	var keyValues []interface{}
 	for _, sourceRow := range sourceRows {
-		keyValues = append(keyValues, sourceRow[sourceKey])
+		v, ok := sourceRow[sourceKey]
+		if !ok {
+			return nil, fmt.Errorf("no source key: %s", sourceKey)
+		}
+		keyValues = append(keyValues, v)
 	}
 	if len(keyValues) == 0 {
 		return nil, nil
@@ -57,7 +69,11 @@ func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows [
 	}
 	targetMap := map[string][]interface{}{}
 	for _, targetRow := range targetRows {
-		k := fmt.Sprintf("%v", targetRow[targetKey])
+		kv, ok := targetRow[targetKey]
+		if !ok {
+			return nil, fmt.Errorf("no target key: %s", targetKey)
+		}
+		k := fmt.Sprintf("%v", kv)
 		targetMap[k] = append(targetMap[k], targetRow)
 	}
 	return targetMap, nil
