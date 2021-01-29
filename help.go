@@ -20,6 +20,11 @@ func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []
 	if len(keyValues) == 0 {
 		return nil, nil
 	}
+	if len(targetColumns) != 0 {
+		if mcommon.IsStringInSlice(targetColumns, targetKey) {
+			targetColumns = append(targetColumns, targetKey)
+		}
+	}
 	targetRows, err := Select().
 		ColumnsString(targetColumns...).
 		FromString(targetTableName).
@@ -45,6 +50,7 @@ func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []
 
 // DbSelectMapOne2Many 获取关联map
 func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string][]interface{}, error) {
+
 	var keyValues []interface{}
 	for _, sourceRow := range sourceRows {
 		v, ok := sourceRow[sourceKey]
@@ -55,6 +61,11 @@ func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows [
 	}
 	if len(keyValues) == 0 {
 		return nil, nil
+	}
+	if len(targetColumns) != 0 {
+		if mcommon.IsStringInSlice(targetColumns, targetKey) {
+			targetColumns = append(targetColumns, targetKey)
+		}
 	}
 	targetRows, err := Select().
 		ColumnsString(targetColumns...).
