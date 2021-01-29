@@ -32,7 +32,7 @@ func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []
 		return nil, nil
 	}
 	if len(targetColumns) != 0 {
-		if mcommon.IsStringInSlice(targetColumns, targetKey) {
+		if !mcommon.IsStringInSlice(targetColumns, targetKey) {
 			targetColumns = append(targetColumns, targetKey)
 		}
 	}
@@ -75,7 +75,7 @@ func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows [
 		return nil, nil
 	}
 	if len(targetColumns) != 0 {
-		if mcommon.IsStringInSlice(targetColumns, targetKey) {
+		if !mcommon.IsStringInSlice(targetColumns, targetKey) {
 			targetColumns = append(targetColumns, targetKey)
 		}
 	}
