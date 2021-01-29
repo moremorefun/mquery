@@ -18,18 +18,41 @@ func formatMapKey(oldKey string) string {
 }
 
 // DbSelectMapOne2One 获取关联map
-func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string]map[string]interface{}, error) {
+func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string]map[string]interface{}, []interface{}, error) {
 	var keyValues []interface{}
 	sourceKey = formatMapKey(sourceKey)
 	for _, sourceRow := range sourceRows {
 		v, ok := sourceRow[sourceKey]
 		if !ok {
-			return nil, fmt.Errorf("no source key: %s", sourceKey)
+			return nil, nil, fmt.Errorf("no source key: %s", sourceKey)
 		}
 		if !mcommon.IsInSlice(keyValues, v) {
 			keyValues = append(keyValues, v)
 		}
 	}
+	targetMap, err := DbSelectKeys2One(ctx, tx, keyValues, targetTableName, targetKey, targetColumns)
+	return targetMap, keyValues, err
+}
+
+// DbSelectMapOne2Many 获取关联map
+func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string][]map[string]interface{}, []interface{}, error) {
+	var keyValues []interface{}
+	sourceKey = formatMapKey(sourceKey)
+	for _, sourceRow := range sourceRows {
+		v, ok := sourceRow[sourceKey]
+		if !ok {
+			return nil, nil, fmt.Errorf("no source key: %s", sourceKey)
+		}
+		if !mcommon.IsInSlice(keyValues, v) {
+			keyValues = append(keyValues, v)
+		}
+	}
+	targetMap, err := DbSelectKeys2Many(ctx, tx, keyValues, targetTableName, targetKey, targetColumns)
+	return targetMap, keyValues, err
+}
+
+// DbSelectKeys2One 获取关联map
+func DbSelectKeys2One(ctx context.Context, tx mcommon.DbExeAble, keyValues []interface{}, targetTableName, targetKey string, targetColumns []string) (map[string]map[string]interface{}, error) {
 	if len(keyValues) == 0 {
 		return nil, nil
 	}
@@ -62,19 +85,8 @@ func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []
 	return targetMap, nil
 }
 
-// DbSelectMapOne2Many 获取关联map
-func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string][]map[string]interface{}, error) {
-	var keyValues []interface{}
-	sourceKey = formatMapKey(sourceKey)
-	for _, sourceRow := range sourceRows {
-		v, ok := sourceRow[sourceKey]
-		if !ok {
-			return nil, fmt.Errorf("no source key: %s", sourceKey)
-		}
-		if !mcommon.IsInSlice(keyValues, v) {
-			keyValues = append(keyValues, v)
-		}
-	}
+// DbSelectKeys2Many 获取关联map
+func DbSelectKeys2Many(ctx context.Context, tx mcommon.DbExeAble, keyValues []interface{}, targetTableName, targetKey string, targetColumns []string) (map[string][]map[string]interface{}, error) {
 	if len(keyValues) == 0 {
 		return nil, nil
 	}
