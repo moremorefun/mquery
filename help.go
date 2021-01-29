@@ -18,7 +18,7 @@ func formatMapKey(oldKey string) string {
 }
 
 // DbSelectMapOne2One 获取关联map
-func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string]interface{}, error) {
+func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string]map[string]interface{}, error) {
 	var keyValues []interface{}
 	sourceKey = formatMapKey(sourceKey)
 	for _, sourceRow := range sourceRows {
@@ -50,7 +50,7 @@ func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []
 		return nil, err
 	}
 	mapTargetKey := formatMapKey(targetKey)
-	targetMap := map[string]interface{}{}
+	targetMap := map[string]map[string]interface{}{}
 	for _, targetRow := range targetRows {
 		kv, ok := targetRow[mapTargetKey]
 		if !ok {
@@ -63,7 +63,7 @@ func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []
 }
 
 // DbSelectMapOne2Many 获取关联map
-func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string][]interface{}, error) {
+func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string][]map[string]interface{}, error) {
 	var keyValues []interface{}
 	sourceKey = formatMapKey(sourceKey)
 	for _, sourceRow := range sourceRows {
@@ -95,7 +95,7 @@ func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows [
 		return nil, err
 	}
 	mapTargetKey := formatMapKey(targetKey)
-	targetMap := map[string][]interface{}{}
+	targetMap := map[string][]map[string]interface{}{}
 	for _, targetRow := range targetRows {
 		kv, ok := targetRow[mapTargetKey]
 		if !ok {
