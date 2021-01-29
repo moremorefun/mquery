@@ -240,7 +240,7 @@ func (q *selectData) ToSQL() (string, map[string]interface{}, error) {
 
 // DoGet 获取数据
 func (q *selectData) DoGet(ctx context.Context, tx mcommon.DbExeAble, dest interface{}) (bool, error) {
-	query, arg, err := q.ToSQL()
+	query, arg, err := q.Limit(1).ToSQL()
 	if err != nil {
 		return false, err
 	}
