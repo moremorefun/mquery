@@ -8,7 +8,7 @@ import (
 	"github.com/moremorefun/mcommon"
 )
 
-func formatMapKey(oldKey string) string {
+func FormatMapKey(oldKey string) string {
 	oldKey = strings.ReplaceAll(oldKey, "`", "")
 	lastIndex := strings.LastIndex(oldKey, ".")
 	if lastIndex != -1 {
@@ -20,7 +20,7 @@ func formatMapKey(oldKey string) string {
 // DbSelectMapOne2One 获取关联map
 func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string]map[string]interface{}, []interface{}, error) {
 	var keyValues []interface{}
-	sourceKey = formatMapKey(sourceKey)
+	sourceKey = FormatMapKey(sourceKey)
 	for _, sourceRow := range sourceRows {
 		v, ok := sourceRow[sourceKey]
 		if !ok {
@@ -37,7 +37,7 @@ func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []
 // DbSelectMapOne2Many 获取关联map
 func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string][]map[string]interface{}, []interface{}, error) {
 	var keyValues []interface{}
-	sourceKey = formatMapKey(sourceKey)
+	sourceKey = FormatMapKey(sourceKey)
 	for _, sourceRow := range sourceRows {
 		v, ok := sourceRow[sourceKey]
 		if !ok {
@@ -72,7 +72,7 @@ func DbSelectKeys2One(ctx context.Context, tx mcommon.DbExeAble, keyValues []int
 	if err != nil {
 		return nil, err
 	}
-	mapTargetKey := formatMapKey(targetKey)
+	mapTargetKey := FormatMapKey(targetKey)
 	targetMap := map[string]map[string]interface{}{}
 	for _, targetRow := range targetRows {
 		kv, ok := targetRow[mapTargetKey]
@@ -106,7 +106,7 @@ func DbSelectKeys2Many(ctx context.Context, tx mcommon.DbExeAble, keyValues []in
 	if err != nil {
 		return nil, err
 	}
-	mapTargetKey := formatMapKey(targetKey)
+	mapTargetKey := FormatMapKey(targetKey)
 	targetMap := map[string][]map[string]interface{}{}
 	for _, targetRow := range targetRows {
 		kv, ok := targetRow[mapTargetKey]
