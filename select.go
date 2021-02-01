@@ -241,6 +241,9 @@ func (q *selectData) ToSQL() (string, map[string]interface{}, error) {
 // DoGet 获取数据
 func (q *selectData) DoGet(ctx context.Context, tx mcommon.DbExeAble, dest interface{}) (bool, error) {
 	query, arg, err := q.Limit(1).ToSQL()
+	if err == ErrInValueLenZero {
+		return false, nil
+	}
 	if err != nil {
 		return false, err
 	}
@@ -259,6 +262,9 @@ func (q *selectData) DoSelect(ctx context.Context, tx mcommon.DbExeAble, dest in
 	if err != nil {
 		return err
 	}
+	if err == ErrInValueLenZero {
+		return nil
+	}
 	return mcommon.DbSelectNamedContent(
 		ctx,
 		tx,
@@ -274,6 +280,9 @@ func (q *selectData) Row(ctx context.Context, tx mcommon.DbExeAble) (map[string]
 		ctx,
 		tx,
 	)
+	if err == ErrInValueLenZero {
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -286,6 +295,9 @@ func (q *selectData) Row(ctx context.Context, tx mcommon.DbExeAble) (map[string]
 // Rows 获取数据
 func (q *selectData) Rows(ctx context.Context, tx mcommon.DbExeAble) ([]map[string]string, error) {
 	query, arg, err := q.ToSQL()
+	if err == ErrInValueLenZero {
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -298,6 +310,9 @@ func (q *selectData) RowInterface(ctx context.Context, tx mcommon.DbExeAble) (ma
 		ctx,
 		tx,
 	)
+	if err == ErrInValueLenZero {
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -310,6 +325,9 @@ func (q *selectData) RowInterface(ctx context.Context, tx mcommon.DbExeAble) (ma
 // RowsInterface 获取数据
 func (q *selectData) RowsInterface(ctx context.Context, tx mcommon.DbExeAble) ([]map[string]interface{}, error) {
 	query, arg, err := q.ToSQL()
+	if err == ErrInValueLenZero {
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}

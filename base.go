@@ -2,6 +2,7 @@ package mquery
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -9,6 +10,9 @@ import (
 )
 
 var globalIndex int64
+
+// ErrInValueLenZero in 条件数据长度为0
+var ErrInValueLenZero = errors.New("sql in values len 0")
 
 // getK 获取key
 func getK(old string) string {
@@ -72,7 +76,7 @@ func (o ConvertEq) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (
 	case reflect.Slice:
 		s := reflect.ValueOf(o.V)
 		if s.Len() == 0 {
-			return bytes.Buffer{}, nil, fmt.Errorf("in cond len 0")
+			return bytes.Buffer{}, nil, ErrInValueLenZero
 		}
 		buf.WriteString(" IN (:")
 		buf.WriteString(k)
