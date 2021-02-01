@@ -50,11 +50,11 @@ func DbGetValuesFromMap(m map[string]map[string]interface{}, key string) ([]inte
 }
 
 // DbGetValuesFromMapRows 获取values
-func DbGetValuesFromMapRows(ms []map[string]map[string]interface{}, key string) ([]interface{}, error) {
+func DbGetValuesFromMapRows(ms map[string][]map[string]interface{}, key string) ([]interface{}, error) {
 	key = FormatMapKey(key)
 	var values []interface{}
-	for _, m := range ms {
-		for _, row := range m {
+	for _, rows := range ms {
+		for _, row := range rows {
 			v, ok := row[key]
 			if !ok {
 				return nil, fmt.Errorf("no key: %s", key)
