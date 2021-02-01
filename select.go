@@ -259,11 +259,11 @@ func (q *selectData) DoGet(ctx context.Context, tx mcommon.DbExeAble, dest inter
 // DoSelect 获取数据
 func (q *selectData) DoSelect(ctx context.Context, tx mcommon.DbExeAble, dest interface{}) error {
 	query, arg, err := q.ToSQL()
-	if err != nil {
-		return err
-	}
 	if err == ErrInValueLenZero {
 		return nil
+	}
+	if err != nil {
+		return err
 	}
 	return mcommon.DbSelectNamedContent(
 		ctx,
