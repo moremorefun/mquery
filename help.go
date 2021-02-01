@@ -17,6 +17,56 @@ func FormatMapKey(oldKey string) string {
 	return oldKey
 }
 
+// DbGetValuesFromRows 获取values
+func DbGetValuesFromRows(rows []map[string]interface{}, key string) ([]interface{}, error) {
+	key = FormatMapKey(key)
+	var values []interface{}
+	for _, row := range rows {
+		v, ok := row[key]
+		if !ok {
+			return nil, fmt.Errorf("no key: %s", key)
+		}
+		if !mcommon.IsInSlice(values, v) {
+			values = append(values, v)
+		}
+	}
+	return values, nil
+}
+
+// DbGetValuesFromMap 获取values
+func DbGetValuesFromMap(m map[string]map[string]interface{}, key string) ([]interface{}, error) {
+	key = FormatMapKey(key)
+	var values []interface{}
+	for _, row := range m {
+		v, ok := row[key]
+		if !ok {
+			return nil, fmt.Errorf("no key: %s", key)
+		}
+		if !mcommon.IsInSlice(values, v) {
+			values = append(values, v)
+		}
+	}
+	return values, nil
+}
+
+// DbGetValuesFromMapRows 获取values
+func DbGetValuesFromMapRows(ms []map[string]map[string]interface{}, key string) ([]interface{}, error) {
+	key = FormatMapKey(key)
+	var values []interface{}
+	for _, m := range ms {
+		for _, row := range m {
+			v, ok := row[key]
+			if !ok {
+				return nil, fmt.Errorf("no key: %s", key)
+			}
+			if !mcommon.IsInSlice(values, v) {
+				values = append(values, v)
+			}
+		}
+	}
+	return values, nil
+}
+
 // DbSelectMapOne2One 获取关联map
 func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string]map[string]interface{}, []interface{}, error) {
 	var keyValues []interface{}
