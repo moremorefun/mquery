@@ -116,7 +116,7 @@ func DbSelectKeys2One(ctx context.Context, tx mcommon.DbExeAble, keyValues []int
 		ColumnsString(targetColumns...).
 		FromString(targetTableName).
 		Where(ConvertEqMake(targetKey, keyValues)).
-		RowsInterface(
+		Rows(
 			ctx,
 			tx,
 		)
@@ -150,7 +150,7 @@ func DbSelectKeys2Many(ctx context.Context, tx mcommon.DbExeAble, keyValues []in
 		ColumnsString(targetColumns...).
 		FromString(targetTableName).
 		Where(ConvertEqMake(targetKey, keyValues)).
-		RowsInterface(
+		Rows(
 			ctx,
 			tx,
 		)
