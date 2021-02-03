@@ -274,36 +274,6 @@ func (q *selectData) DoSelect(ctx context.Context, tx mcommon.DbExeAble, dest in
 	)
 }
 
-// Row 获取数据
-func (q *selectData) Row(ctx context.Context, tx mcommon.DbExeAble) (map[string]string, error) {
-	rows, err := q.Limit(1).Rows(
-		ctx,
-		tx,
-	)
-	if err == ErrInValueLenZero {
-		return nil, nil
-	}
-	if err != nil {
-		return nil, err
-	}
-	if len(rows) == 0 {
-		return nil, nil
-	}
-	return rows[0], nil
-}
-
-// Rows 获取数据
-func (q *selectData) Rows(ctx context.Context, tx mcommon.DbExeAble) ([]map[string]string, error) {
-	query, arg, err := q.ToSQL()
-	if err == ErrInValueLenZero {
-		return nil, nil
-	}
-	if err != nil {
-		return nil, err
-	}
-	return mcommon.DbNamedRowsContent(ctx, tx, query, arg)
-}
-
 // RowInterface 获取数据
 func (q *selectData) RowInterface(ctx context.Context, tx mcommon.DbExeAble) (map[string]interface{}, error) {
 	rows, err := q.Limit(1).RowsInterface(
@@ -331,5 +301,5 @@ func (q *selectData) RowsInterface(ctx context.Context, tx mcommon.DbExeAble) ([
 	if err != nil {
 		return nil, err
 	}
-	return mcommon.DbNamedRowsInterfaceContent(ctx, tx, query, arg)
+	return mcommon.DbNamedRowsContent(ctx, tx, query, arg)
 }

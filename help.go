@@ -2,6 +2,7 @@ package mquery
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -67,8 +68,8 @@ func DbGetValuesFromMapRows(ms map[string][]map[string]interface{}, key string) 
 	return values, nil
 }
 
-// DbSelectMapOne2One 获取关联map
-func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string]map[string]interface{}, []interface{}, error) {
+// DbSelectRows2One 获取关联map
+func DbSelectRows2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string]map[string]interface{}, []interface{}, error) {
 	var keyValues []interface{}
 	sourceKey = FormatMapKey(sourceKey)
 	for _, sourceRow := range sourceRows {
@@ -84,8 +85,8 @@ func DbSelectMapOne2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []
 	return targetMap, keyValues, err
 }
 
-// DbSelectMapOne2Many 获取关联map
-func DbSelectMapOne2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string][]map[string]interface{}, []interface{}, error) {
+// DbSelectRows2Many 获取关联map
+func DbSelectRows2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string][]map[string]interface{}, []interface{}, error) {
 	var keyValues []interface{}
 	sourceKey = FormatMapKey(sourceKey)
 	for _, sourceRow := range sourceRows {
@@ -167,4 +168,17 @@ func DbSelectKeys2Many(ctx context.Context, tx mcommon.DbExeAble, keyValues []in
 		targetMap[k] = append(targetMap[k], targetRow)
 	}
 	return targetMap, nil
+}
+
+// DbInterfaceToStruct
+func DbInterfaceToStruct(inc interface{}, s interface{}) error {
+	b, err := json.Marshal(inc)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(b, s)
+	if err != nil {
+		return err
+	}
+	return nil
 }
