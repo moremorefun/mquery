@@ -70,16 +70,9 @@ func DbGetValuesFromMapRows(ms map[string][]map[string]interface{}, key string) 
 
 // DbSelectRows2One 获取关联map
 func DbSelectRows2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string]map[string]interface{}, []interface{}, error) {
-	var keyValues []interface{}
-	sourceKey = FormatMapKey(sourceKey)
-	for _, sourceRow := range sourceRows {
-		v, ok := sourceRow[sourceKey]
-		if !ok {
-			return nil, nil, fmt.Errorf("no source key: %s", sourceKey)
-		}
-		if !mcommon.IsInSlice(keyValues, v) {
-			keyValues = append(keyValues, v)
-		}
+	keyValues, err := DbGetValuesFromRows(sourceRows, sourceKey)
+	if err != nil {
+		return nil, nil, err
 	}
 	targetMap, err := DbSelectKeys2One(ctx, tx, keyValues, targetTableName, targetKey, targetColumns)
 	return targetMap, keyValues, err
@@ -87,16 +80,9 @@ func DbSelectRows2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []ma
 
 // DbSelectRows2Many 获取关联map
 func DbSelectRows2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string][]map[string]interface{}, []interface{}, error) {
-	var keyValues []interface{}
-	sourceKey = FormatMapKey(sourceKey)
-	for _, sourceRow := range sourceRows {
-		v, ok := sourceRow[sourceKey]
-		if !ok {
-			return nil, nil, fmt.Errorf("no source key: %s", sourceKey)
-		}
-		if !mcommon.IsInSlice(keyValues, v) {
-			keyValues = append(keyValues, v)
-		}
+	keyValues, err := DbGetValuesFromRows(sourceRows, sourceKey)
+	if err != nil {
+		return nil, nil, err
 	}
 	targetMap, err := DbSelectKeys2Many(ctx, tx, keyValues, targetTableName, targetKey, targetColumns)
 	return targetMap, keyValues, err
