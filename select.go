@@ -275,8 +275,8 @@ func (q *selectData) DoSelect(ctx context.Context, tx mcommon.DbExeAble, dest in
 }
 
 // RowInterface 获取数据
-func (q *selectData) RowInterface(ctx context.Context, tx mcommon.DbExeAble) (map[string]interface{}, error) {
-	rows, err := q.Limit(1).RowsInterface(
+func (q *selectData) Row(ctx context.Context, tx mcommon.DbExeAble) (map[string]interface{}, error) {
+	rows, err := q.Limit(1).Rows(
 		ctx,
 		tx,
 	)
@@ -293,7 +293,7 @@ func (q *selectData) RowInterface(ctx context.Context, tx mcommon.DbExeAble) (ma
 }
 
 // RowsInterface 获取数据
-func (q *selectData) RowsInterface(ctx context.Context, tx mcommon.DbExeAble) ([]map[string]interface{}, error) {
+func (q *selectData) Rows(ctx context.Context, tx mcommon.DbExeAble) ([]map[string]interface{}, error) {
 	query, arg, err := q.ToSQL()
 	if err == ErrInValueLenZero {
 		return nil, nil
