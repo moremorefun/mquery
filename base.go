@@ -29,6 +29,7 @@ func getK(old string) string {
 // ConvertRaw 原样生成
 type ConvertRaw string
 
+// AppendToQuery 写入sql,填充arg
 func (o ConvertRaw) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	_, err := buf.WriteString(string(o))
 	if err != nil {
@@ -67,6 +68,7 @@ func ConvertEqMake(k string, v interface{}) ConvertEq {
 	}
 }
 
+// AppendToQuery 写入sql,填充arg
 func (o ConvertEq) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	k := getK(o.K)
 
@@ -100,6 +102,7 @@ func ConvertAddMake(k string, v interface{}) ConvertAdd {
 	}
 }
 
+// AppendToQuery 写入sql,填充arg
 func (o ConvertAdd) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	k := getK(o.K)
 
@@ -138,6 +141,7 @@ func ConvertGtMake(k string, v interface{}) ConvertGt {
 	}
 }
 
+// AppendToQuery 写入sql,填充arg
 func (o ConvertGt) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	k := getK(o.K)
 
@@ -168,6 +172,7 @@ func ConvertLtMake(k string, v interface{}) ConvertLt {
 	}
 }
 
+// AppendToQuery 写入sql,填充arg
 func (o ConvertLt) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	k := getK(o.K)
 
@@ -198,6 +203,7 @@ func ConvertEqRawMake(k, v string) ConvertEqRaw {
 	}
 }
 
+// AppendToQuery 写入sql,填充arg
 func (o ConvertEqRaw) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	_, err := buf.WriteString(o.K)
 	if err != nil {
@@ -217,6 +223,7 @@ func (o ConvertEqRaw) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}
 // ConvertDesc k DESC
 type ConvertDesc string
 
+// AppendToQuery 写入sql,填充arg
 func (o ConvertDesc) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	_, err := buf.WriteString(string(o))
 	if err != nil {
@@ -232,6 +239,7 @@ func (o ConvertDesc) AppendToQuery(buf bytes.Buffer, arg map[string]interface{})
 // ConvertValue k=VALUE(k)
 type ConvertValue string
 
+// AppendToQuery 写入sql,填充arg
 func (o ConvertValue) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	_, err := buf.WriteString(string(o))
 	if err != nil {
@@ -252,6 +260,7 @@ func (o ConvertValue) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}
 	return buf, arg, nil
 }
 
+// ConvertOr 或条件
 type ConvertOr struct {
 	Left  SQLAble
 	Right SQLAble
@@ -265,6 +274,7 @@ func ConvertOrMake(left, right SQLAble) ConvertOr {
 	}
 }
 
+// AppendToQuery 写入sql,填充arg
 func (o ConvertOr) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	var err error
 	if o.Left == nil || o.Right == nil {
@@ -287,7 +297,7 @@ func (o ConvertOr) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (
 // ConvertFuncAs func(col) AS as
 type ConvertFuncAs ConvertFuncColAs
 
-// ConvertEqRawMake 生成
+// ConvertFuncAsMake 生成
 func ConvertFuncAsMake(f, col, as string) ConvertFuncAs {
 	return ConvertFuncAs{
 		Func: f,
@@ -296,6 +306,7 @@ func ConvertFuncAsMake(f, col, as string) ConvertFuncAs {
 	}
 }
 
+// AppendToQuery 写入sql,填充arg
 func (o ConvertFuncAs) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
 	_, err := buf.WriteString(o.Func)
 	if err != nil {

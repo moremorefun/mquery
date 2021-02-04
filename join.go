@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// join类型
 const (
 	JoinTypeInner = 1
 	JoinTypeLeft  = 2

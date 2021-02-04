@@ -2,13 +2,14 @@ package mquery
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"strings"
 
+	jsoniter "github.com/json-iterator/go"
 	"github.com/moremorefun/mcommon"
 )
 
+// FormatMapKey 格式化字段名到key
 func FormatMapKey(oldKey string) string {
 	oldKey = strings.ReplaceAll(oldKey, "`", "")
 	lastIndex := strings.LastIndex(oldKey, ".")
@@ -156,13 +157,13 @@ func DbSelectKeys2Many(ctx context.Context, tx mcommon.DbExeAble, keyValues []in
 	return targetMap, nil
 }
 
-// DbInterfaceToStruct
+// DbInterfaceToStruct 转换到struct
 func DbInterfaceToStruct(inc interface{}, s interface{}) error {
-	b, err := json.Marshal(inc)
+	b, err := jsoniter.Marshal(inc)
 	if err != nil {
 		return err
 	}
-	err = json.Unmarshal(b, s)
+	err = jsoniter.Unmarshal(b, s)
 	if err != nil {
 		return err
 	}
