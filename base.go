@@ -50,6 +50,13 @@ type ConvertKvStr struct {
 	V string
 }
 
+// ConvertBetween between结构
+type ConvertBetween struct {
+	K  string
+	V1 interface{}
+	V2 interface{}
+}
+
 // ConvertFuncColAs 字符串
 type ConvertFuncColAs struct {
 	Func string
@@ -189,6 +196,45 @@ func (o ConvertLt) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (
 		return bytes.Buffer{}, nil, err
 	}
 	arg[k] = o.V
+	return buf, arg, nil
+}
+
+// ConvertBetweenMake 生成
+func ConvertBetweenMake(k string, v1 interface{}, v2 interface{}) ConvertBetween {
+	return ConvertBetween{
+		K:  k,
+		V1: v1,
+		V2: v2,
+	}
+}
+
+// AppendToQuery 写入sql,填充arg k BETWEEN :k1 AND :k2
+func (o ConvertBetween) AppendToQuery(buf bytes.Buffer, arg map[string]interface{}) (bytes.Buffer, map[string]interface{}, error) {
+	k1 := getK(o.K)
+	k2 := getK(o.K)
+
+	_, err := buf.WriteString(o.K)
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	_, err = buf.WriteString(" BETWEEN :")
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	_, err = buf.WriteString(k1)
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	_, err = buf.WriteString(" AND :")
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	_, err = buf.WriteString(k2)
+	if err != nil {
+		return bytes.Buffer{}, nil, err
+	}
+	arg[k1] = o.V1
+	arg[k2] = o.V2
 	return buf, arg, nil
 }
 
