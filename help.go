@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/gin-gonic/gin"
+
 	jsoniter "github.com/json-iterator/go"
 	"github.com/moremorefun/mcommon"
 )
@@ -20,7 +22,7 @@ func FormatMapKey(oldKey string) string {
 }
 
 // DbGetValuesFromRows 获取values
-func DbGetValuesFromRows(rows []map[string]interface{}, key string) ([]interface{}, error) {
+func DbGetValuesFromRows(rows []gin.H, key string) ([]interface{}, error) {
 	key = FormatMapKey(key)
 	var values []interface{}
 	for _, row := range rows {
@@ -36,7 +38,7 @@ func DbGetValuesFromRows(rows []map[string]interface{}, key string) ([]interface
 }
 
 // DbGetValuesFromMap 获取values
-func DbGetValuesFromMap(m map[string]map[string]interface{}, key string) ([]interface{}, error) {
+func DbGetValuesFromMap(m map[string]gin.H, key string) ([]interface{}, error) {
 	key = FormatMapKey(key)
 	var values []interface{}
 	for _, row := range m {
@@ -52,7 +54,7 @@ func DbGetValuesFromMap(m map[string]map[string]interface{}, key string) ([]inte
 }
 
 // DbGetValuesFromMapRows 获取values
-func DbGetValuesFromMapRows(ms map[string][]map[string]interface{}, key string) ([]interface{}, error) {
+func DbGetValuesFromMapRows(ms map[string][]gin.H, key string) ([]interface{}, error) {
 	key = FormatMapKey(key)
 	var values []interface{}
 	for _, rows := range ms {
@@ -70,7 +72,7 @@ func DbGetValuesFromMapRows(ms map[string][]map[string]interface{}, key string) 
 }
 
 // DbSelectRows2One 获取关联map
-func DbSelectRows2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string]map[string]interface{}, []interface{}, error) {
+func DbSelectRows2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []gin.H, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string]gin.H, []interface{}, error) {
 	keyValues, err := DbGetValuesFromRows(sourceRows, sourceKey)
 	if err != nil {
 		return nil, nil, err
@@ -80,7 +82,7 @@ func DbSelectRows2One(ctx context.Context, tx mcommon.DbExeAble, sourceRows []ma
 }
 
 // DbSelectRows2Many 获取关联map
-func DbSelectRows2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows []map[string]interface{}, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string][]map[string]interface{}, []interface{}, error) {
+func DbSelectRows2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows []gin.H, sourceKey, targetTableName, targetKey string, targetColumns []string) (map[string][]gin.H, []interface{}, error) {
 	keyValues, err := DbGetValuesFromRows(sourceRows, sourceKey)
 	if err != nil {
 		return nil, nil, err
@@ -90,7 +92,7 @@ func DbSelectRows2Many(ctx context.Context, tx mcommon.DbExeAble, sourceRows []m
 }
 
 // DbSelectKeys2One 获取关联map
-func DbSelectKeys2One(ctx context.Context, tx mcommon.DbExeAble, keyValues []interface{}, targetTableName, targetKey string, targetColumns []string) (map[string]map[string]interface{}, error) {
+func DbSelectKeys2One(ctx context.Context, tx mcommon.DbExeAble, keyValues []interface{}, targetTableName, targetKey string, targetColumns []string) (map[string]gin.H, error) {
 	if len(keyValues) == 0 {
 		return nil, nil
 	}
@@ -111,7 +113,7 @@ func DbSelectKeys2One(ctx context.Context, tx mcommon.DbExeAble, keyValues []int
 		return nil, err
 	}
 	mapTargetKey := FormatMapKey(targetKey)
-	targetMap := map[string]map[string]interface{}{}
+	targetMap := map[string]gin.H{}
 	for _, targetRow := range targetRows {
 		kv, ok := targetRow[mapTargetKey]
 		if !ok {
@@ -124,7 +126,7 @@ func DbSelectKeys2One(ctx context.Context, tx mcommon.DbExeAble, keyValues []int
 }
 
 // DbSelectKeys2Many 获取关联map
-func DbSelectKeys2Many(ctx context.Context, tx mcommon.DbExeAble, keyValues []interface{}, targetTableName, targetKey string, targetColumns []string) (map[string][]map[string]interface{}, error) {
+func DbSelectKeys2Many(ctx context.Context, tx mcommon.DbExeAble, keyValues []interface{}, targetTableName, targetKey string, targetColumns []string) (map[string][]gin.H, error) {
 	if len(keyValues) == 0 {
 		return nil, nil
 	}
@@ -145,7 +147,7 @@ func DbSelectKeys2Many(ctx context.Context, tx mcommon.DbExeAble, keyValues []in
 		return nil, err
 	}
 	mapTargetKey := FormatMapKey(targetKey)
-	targetMap := map[string][]map[string]interface{}{}
+	targetMap := map[string][]gin.H{}
 	for _, targetRow := range targetRows {
 		kv, ok := targetRow[mapTargetKey]
 		if !ok {

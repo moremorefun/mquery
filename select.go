@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/moremorefun/mcommon"
 )
 
@@ -275,7 +277,7 @@ func (q *selectData) DoSelect(ctx context.Context, tx mcommon.DbExeAble, dest in
 }
 
 // RowInterface 获取数据
-func (q *selectData) Row(ctx context.Context, tx mcommon.DbExeAble) (map[string]interface{}, error) {
+func (q *selectData) Row(ctx context.Context, tx mcommon.DbExeAble) (gin.H, error) {
 	rows, err := q.Limit(1).Rows(
 		ctx,
 		tx,
@@ -293,7 +295,7 @@ func (q *selectData) Row(ctx context.Context, tx mcommon.DbExeAble) (map[string]
 }
 
 // RowsInterface 获取数据
-func (q *selectData) Rows(ctx context.Context, tx mcommon.DbExeAble) ([]map[string]interface{}, error) {
+func (q *selectData) Rows(ctx context.Context, tx mcommon.DbExeAble) ([]gin.H, error) {
 	query, arg, err := q.ToSQL()
 	if err == ErrInValueLenZero {
 		return nil, nil
